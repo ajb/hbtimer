@@ -9,6 +9,7 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
+  TextInput,
   View,
   TouchableOpacity,
   TouchableHighlight,
@@ -19,40 +20,69 @@ import {
 import NavigationBar from 'react-native-navbar';
 
 import Icon from 'react-native-vector-icons/Entypo';
+
 const plusIcon = (
   <TouchableOpacity>
-    <Icon name="plus" size={32} color="#0076ff" style={{marginTop: 6, marginRight: 10}} />
+    <Icon name="plus" size={32} color="#0076ff" style={{marginTop: 6, marginRight: 8}} />
   </TouchableOpacity>
 )
 
 let navigator;
 
 const dummyHangs = [
-  { key: 0, text: "3 finger large edge", weight: "20" },
-  { key: 1, text: "Sloper", weight: "30" }
+  { key: 0, text: "3 finger large edge", weight: "-20lbs" },
+  { key: 1, text: "Sloper", weight: "-30lbs" }
 ]
 
-function handleEdit() {
-  navigator.replace(routes[1])
-}
-
-function handleDone() {
-  navigator.replace(routes[0])
-}
-
-const mainScreen = (
-  <View style={{flex: 1}}>
-    <NavigationBar
-      title={{ title: "HBTimer" }}
-      leftButton={{ title: "Edit", handler: handleEdit }}
-      rightButton={plusIcon}
-      containerStyle={{borderBottomWidth: 1, borderBottomColor: "#ccc"}}
-    />
-
-    <View style={{flex: 1}}>
-      {dummyHangs.map((item, index) => <Text key={index}>{item.text}</Text>)}
+function ListItem(props) {
+  return (
+    <View style={{
+      height: 43,
+      paddingRight: 15,
+      marginLeft: 15,
+      borderBottomWidth: 1,
+      borderBottomColor: "#ccc",
+      flexDirection: "row",
+      justifyContent: "flex-start",
+      alignItems: "center"
+    }}>
+      <Text style={{fontSize: 16.5}}>{props.item.text}</Text>
+      <Text style={{fontSize: 16.5, color: "#8e8e93", marginLeft: 10}}>{props.item.weight}</Text>
     </View>
+  );
+}
 
+function EditableListItem(props) {
+  return (
+    <View style={{
+      height: 43,
+      paddingRight: 46,
+      paddingLeft: 36,
+      marginLeft: 15,
+      borderBottomWidth: 1,
+      borderBottomColor: "#ccc",
+      flexDirection: "row",
+      justifyContent: "flex-start",
+      alignItems: "center"
+    }}>
+      <Icon name="circle-with-minus" size={28} color="#ff3824" style={{position: "absolute", left: 0}} />
+      <TextInput style={{fontSize: 16.5, flex: 1}} value={props.item.text} />
+      <TextInput style={{minWidth: 60, fontSize: 16.5, color: "#8e8e93", marginLeft: 10, alignContent: "flex-end"}} value={props.item.weight} />
+      <Icon name="menu" size={28} color="#333" style={{position: "absolute", right: 10}} />
+    </View>
+  );
+}
+
+/*<NavigationBar
+  title={{ title: "HBTimer" }}
+  leftButton={{ title: "Done", handler: handleDone }}
+  rightButton={plusIcon}
+  containerStyle={{borderBottomWidth: 1, borderBottomColor: "#ccc"}}
+/>
+*/
+
+function StartBar () {
+  return (
     <View style={{flexDirection: "row", justifyContent: "center", alignItems: "center", height: 100, padding: 1, borderTopWidth: 1, borderTopColor: "#ccc", backgroundColor: "white"}}>
       <TouchableHighlight style={{
         height: 80,
@@ -77,17 +107,26 @@ const mainScreen = (
         </View>
       </TouchableHighlight>
     </View>
+  )
+}
+
+const mainScreen = (
+  <View style={{flex: 1}}>
+    <View style={{flex: 1}}>
+      {dummyHangs.map((item, index) => <ListItem key={index} item={item} />)}
+    </View>
+
+    <StartBar />
   </View>
 )
 
 const editScreen = (
   <View style={{flex: 1}}>
-    <NavigationBar
-      title={{ title: "HBTimer" }}
-      leftButton={{ title: "Done", handler: handleDone }}
-      rightButton={plusIcon}
-      containerStyle={{borderBottomWidth: 1, borderBottomColor: "#ccc"}}
-    />
+    <View style={{flex: 1}}>
+      {dummyHangs.map((item, index) => <EditableListItem key={index} item={item} />)}
+    </View>
+
+    <StartBar />
   </View>
 )
 
@@ -97,13 +136,50 @@ const routes = [
 ]
 
 export default class hbtimer extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { isEditing: false };
+  }
+
+  handleEdit = () => {
+    this.navigator.replace(routes[1])
+    this.setState({isEditing: true})
+  }
+
+  handleDone = () => {
+    this.navigator.replace(routes[0])
+    this.setState({isEditing: false})
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Navigator
           initialRoute={routes[0]}
           renderScene={(route, navigator) => route.component}
-          ref={(node) => navigator = node}
+          ref={(node) => { this.navigator = node }}
+          navigationBar={
+
+            <NavigationBar
+              title={{ title: "HBTimer" }}
+              leftButton={
+                this.state.isEditing ?
+                  { title: "Done", handler: this.handleDone } :
+                  { title: "Edit", handler: this.handleEdit }
+              }
+              rightButton={plusIcon}
+              containerStyle={{
+                borderBottomWidth: 1,
+                borderBottomColor: "#ccc",
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+              }}
+            />
+
+          }
+          sceneStyle={{paddingTop: 65}}
         />
       </View>
     );
