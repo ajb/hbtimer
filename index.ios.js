@@ -39,7 +39,7 @@ function ListItem(props) {
       borderBottomWidth: 1,
       borderBottomColor: "#666",
       flexDirection: "row",
-      justifyContent: "flex-start",
+      justifyContent: "space-between",
       alignItems: "center"
     }}>
       <Text style={{fontSize: 17.5, color: "#ccc"}}>{props.item.text}</Text>
@@ -97,7 +97,7 @@ class EditableListItem extends Component {
           onSubmitEditing={() => this.weightInput.focus()}
         />
         <TextInput
-          style={{minWidth: 60, fontSize: 17.5, color: "#999", marginLeft: 10, alignContent: "flex-end"}}
+          style={{textAlign: 'right', minWidth: 60, fontSize: 17.5, color: "#999", marginLeft: 10, alignContent: "flex-end"}}
           value={this.props.item.weight}
           onChangeText={(text) => this.props.onChangeText('weight', text)}
           ref={(node) => this.weightInput = node}
@@ -119,7 +119,7 @@ function StartBar (props) {
       padding: 1,
       backgroundColor: "#000",
       borderTopWidth: 1,
-      borderTopColor: "#666",
+      borderTopColor: "#444",
       paddingLeft: 20,
       paddingRight: 20
     }}>
@@ -301,7 +301,7 @@ export default class hbtimer extends Component {
     })
 
     if (newHangs.length === 0){
-      newHangs = defaultHangs;
+      newHangs = [{ text: "Small edge half-crimp", weight: ""}];
     }
 
     this.setState({
