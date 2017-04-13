@@ -14,7 +14,8 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   FlatList,
-  Navigator
+  Navigator,
+  ActionSheetIOS
 } from 'react-native';
 
 import NavigationBar from 'react-native-navbar';
@@ -52,34 +53,41 @@ function ListItem(props) {
   );
 }
 
-function EditableListItem(props) {
-  return (
-    <View style={{
-      height: 43,
-      paddingRight: 46,
-      paddingLeft: 36,
-      marginLeft: 15,
-      borderBottomWidth: 1,
-      borderBottomColor: "#ccc",
-      flexDirection: "row",
-      justifyContent: "flex-start",
-      alignItems: "center"
-    }}>
-      <Icon name="circle-with-minus" size={28} color="#ff3824" style={{position: "absolute", left: 0}} />
-      <TextInput style={{fontSize: 16.5, flex: 1}} value={props.item.text} />
-      <TextInput style={{minWidth: 60, fontSize: 16.5, color: "#8e8e93", marginLeft: 10, alignContent: "flex-end"}} value={props.item.weight} />
-      <Icon name="menu" size={28} color="#333" style={{position: "absolute", right: 10}} />
-    </View>
-  );
-}
+class EditableListItem extends Component {
+  onDelete = () => {
+    ActionSheetIOS.showActionSheetWithOptions({
+      options: ['Delete', 'Cancel'],
+      cancelButtonIndex: 1,
+      destructiveButtonIndex: 0
+    },
+    (buttonIndex) => {
+      alert(buttonIndex);
+    });
+  }
 
-/*<NavigationBar
-  title={{ title: "HBTimer" }}
-  leftButton={{ title: "Done", handler: handleDone }}
-  rightButton={plusIcon}
-  containerStyle={{borderBottomWidth: 1, borderBottomColor: "#ccc"}}
-/>
-*/
+  render() {
+    return (
+      <View style={{
+        height: 43,
+        paddingRight: 46,
+        paddingLeft: 36,
+        marginLeft: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: "#ccc",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center"
+      }}>
+        <TouchableOpacity style={{position: "absolute", left: 0}} onPress={this.onDelete}>
+          <Icon name="circle-with-minus" size={28} color="#ff3824" />
+        </TouchableOpacity>
+        <TextInput style={{fontSize: 16.5, flex: 1}} value={this.props.item.text} />
+        <TextInput style={{minWidth: 60, fontSize: 16.5, color: "#8e8e93", marginLeft: 10, alignContent: "flex-end"}} value={this.props.item.weight} />
+        <Icon name="menu" size={28} color="#333" style={{position: "absolute", right: 10}} />
+      </View>
+    );
+  }
+}
 
 function StartBar () {
   return (
