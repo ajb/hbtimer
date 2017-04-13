@@ -26,10 +26,14 @@ import Icon from 'react-native-vector-icons/Entypo';
 
 let navigator;
 
+const defaultHangs = [
+  { text: "Small edge half-crimp", weight: "-10lbs" },
+]
+
 function ListItem(props) {
   return (
     <View style={{
-      height: 43,
+      height: 50,
       paddingRight: 15,
       marginLeft: 15,
       borderBottomWidth: 1,
@@ -38,8 +42,8 @@ function ListItem(props) {
       justifyContent: "flex-start",
       alignItems: "center"
     }}>
-      <Text style={{fontSize: 16.5, color: "#ccc"}}>{props.item.text}</Text>
-      <Text style={{fontSize: 16.5, color: "#999", marginLeft: 10}}>{props.item.weight}</Text>
+      <Text style={{fontSize: 17.5, color: "#ccc"}}>{props.item.text}</Text>
+      <Text style={{fontSize: 17.5, color: "#999", marginLeft: 10}}>{props.item.weight}</Text>
     </View>
   );
 }
@@ -65,7 +69,7 @@ class EditableListItem extends Component {
   render() {
     return (
       <View style={{
-        height: 43,
+        height: 50,
         paddingRight: 46,
         paddingLeft: 36,
         marginLeft: 15,
@@ -85,7 +89,7 @@ class EditableListItem extends Component {
           </View>
         }
         <TextInput
-          style={{fontSize: 16.5, flex: 1, color: "#ccc"}}
+          style={{fontSize: 17.5, flex: 1, color: "#ccc"}}
           value={this.props.item.text}
           autoFocus={this.props.isLast}
           onChangeText={(text) => this.props.onChangeText('text', text)}
@@ -93,7 +97,7 @@ class EditableListItem extends Component {
           onSubmitEditing={() => this.weightInput.focus()}
         />
         <TextInput
-          style={{minWidth: 60, fontSize: 16.5, color: "#999", marginLeft: 10, alignContent: "flex-end"}}
+          style={{minWidth: 60, fontSize: 17.5, color: "#999", marginLeft: 10, alignContent: "flex-end"}}
           value={this.props.item.weight}
           onChangeText={(text) => this.props.onChangeText('weight', text)}
           ref={(node) => this.weightInput = node}
@@ -269,9 +273,7 @@ export default class hbtimer extends Component {
     super(props);
     this.state = {
       timerStarted: false,
-      hangs: [
-        { text: "Small edge half-crimp", weight: "-10lbs" },
-      ]
+      hangs: defaultHangs
     }
   }
 
@@ -294,10 +296,16 @@ export default class hbtimer extends Component {
   }
 
   removeBlankHangs () {
+    let newHangs = this.state.hangs.filter(hang => {
+      return hang.text.trim().length > 0
+    })
+
+    if (newHangs.length === 0){
+      newHangs = defaultHangs;
+    }
+
     this.setState({
-      hangs: this.state.hangs.filter(hang => {
-        return hang.text.trim().length > 0
-      })
+      hangs: newHangs
     })
   }
 
