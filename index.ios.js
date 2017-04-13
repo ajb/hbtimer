@@ -105,7 +105,7 @@ class EditableListItem extends Component {
   }
 }
 
-function StartBar () {
+function StartBar (props) {
   return (
     <View style={{
       flexDirection: "row",
@@ -124,9 +124,9 @@ function StartBar () {
         width: 80,
         borderRadius: 50,
         backgroundColor: "#333",
-        opacity: 0.7
+        opacity: props.timerStarted ? 1 : 0.7
       }} underlayColor="#222"
-      onPress={() => {}}
+      onPress={props.onCancel}
       >
         <View style={{
           borderColor: "#000",
@@ -143,28 +143,55 @@ function StartBar () {
         </View>
       </TouchableHighlight>
 
-      <TouchableHighlight style={{
-        height: 80,
-        width: 80,
-        borderRadius: 50,
-        backgroundColor: "#007100"
-      }} underlayColor="#004f00"
-      onPress={() => {}}
-      >
-        <View style={{
-          borderColor: "#000",
-          borderWidth: 1,
-          height: 76,
-          width: 76,
-          marginTop: 2,
-          marginLeft: 2,
-          borderRadius: 76/2,
-          justifyContent: "center",
-          alignItems: "center"
-        }}>
-          <Text style={{fontSize: 16, color: "#cbe6c4", backgroundColor: "transparent"}}>Start</Text>
-        </View>
-      </TouchableHighlight>
+      {
+        props.timerStarted ? (
+          <TouchableHighlight style={{
+            height: 80,
+            width: 80,
+            borderRadius: 50,
+            backgroundColor: "#b36909"
+          }} underlayColor="#774709"
+          onPress={props.onPause}
+          >
+            <View style={{
+              borderColor: "#000",
+              borderWidth: 1,
+              height: 76,
+              width: 76,
+              marginTop: 2,
+              marginLeft: 2,
+              borderRadius: 76/2,
+              justifyContent: "center",
+              alignItems: "center"
+            }}>
+              <Text style={{fontSize: 16, color: "#decab6", backgroundColor: "transparent"}}>Pause</Text>
+            </View>
+          </TouchableHighlight>
+        ) : (
+          <TouchableHighlight style={{
+            height: 80,
+            width: 80,
+            borderRadius: 50,
+            backgroundColor: "#007100"
+          }} underlayColor="#004f00"
+          onPress={props.onStart}
+          >
+            <View style={{
+              borderColor: "#000",
+              borderWidth: 1,
+              height: 76,
+              width: 76,
+              marginTop: 2,
+              marginLeft: 2,
+              borderRadius: 76/2,
+              justifyContent: "center",
+              alignItems: "center"
+            }}>
+              <Text style={{fontSize: 16, color: "#cbe6c4", backgroundColor: "transparent"}}>Start</Text>
+            </View>
+          </TouchableHighlight>
+        )
+      }
     </View>
   )
 }
@@ -175,8 +202,6 @@ function MainScreen (props) {
       <View style={{flex: 1}}>
         {props.hangs.map((item, index) => <ListItem key={index} item={item} />)}
       </View>
-
-      <StartBar />
     </View>
   )
 }
@@ -198,24 +223,32 @@ function EditScreen (props) {
                   />
         })}
       </View>
-      <StartBar />
     </View>
   )
 }
 
-const routes = [
-  {
-    title: 'Main',
-    renderScene: (ctx) => <MainScreen hangs={ctx.state.hangs} />
+function WorkoutScreen (props) {
+  return (
+    <View style={{flex: 1, backgroundColor: "#222", paddingTop: 20}}>
+      <Text style={{color: "white"}}>Go Get em</Text>
+    </View>
+  )
+}
+
+const routes = {
+  list: {
+    render: (ctx) => <MainScreen hangs={ctx.state.hangs} />
   },
-  {
-    title: 'Edit',
-    renderScene: (ctx) => <EditScreen
+  edit: {
+    render: (ctx) => <EditScreen
                             hangs={ctx.state.hangs}
                             onChangeText={ctx.onChangeText}
                             onItemDelete={ctx.onItemDelete} />
+  },
+  workout: {
+    render: (ctx) => <WorkoutScreen />
   }
-]
+}
 
 export default class hbtimer extends Component {
   storageKey = 'hbtimer-hangs';
@@ -235,7 +268,7 @@ export default class hbtimer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isEditing: false,
+      timerStarted: false,
       hangs: [
         { text: "Small edge half-crimp", weight: "-10lbs" },
       ]
@@ -269,18 +302,16 @@ export default class hbtimer extends Component {
   }
 
   handleEdit = () => {
-    this.navigator.replace(routes[1])
-    this.setState({isEditing: true})
+    this.navigate('edit')
   }
 
   handleDone = () => {
-    this.navigator.replace(routes[0])
-    this.setState({isEditing: false})
+    this.navigate('list')
     this.removeBlankHangs()
   }
 
   handleAdd = () => {
-    if (!this.state.isEditing){
+    if (this.state.currentRoute !== 'edit'){
       this.handleEdit();
     }
 
@@ -292,18 +323,37 @@ export default class hbtimer extends Component {
     })
   }
 
+  onStart = () => {
+    this.navigate('workout')
+    this.setState({timerStarted: true})
+  }
+
+  onCancel = () => {
+    this.navigate('list')
+  }
+
+  onPause = () => {
+
+  }
+
+  navigate (routeName) {
+    this.navigator.replace(routes[routeName])
+    this.setState({currentRoute: routeName})
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Navigator
-          initialRoute={routes[0]}
-          renderScene={route => route.renderScene(this)}
+          initialRoute={routes.list}
+          renderScene={(route => route.render(this))}
           ref={(node) => { this.navigator = node }}
           navigationBar={
+            this.state.currentRoute === 'workout' ? null :
             <NavigationBar
               title={{ title: "HBTimer", style: { color: "#fff"} }}
               leftButton={
-                this.state.isEditing ?
+                this.state.currentRoute === 'edit' ?
                   { title: "Done", handler: this.handleDone, tintColor: "#ff9600" } :
                   { title: "Edit", handler: this.handleEdit, tintColor: "#ff9600" }
               }
@@ -325,7 +375,14 @@ export default class hbtimer extends Component {
             />
 
           }
-          sceneStyle={{paddingTop: 65}}
+          sceneStyle={{paddingTop: this.state.currentRoute === 'workout' ? 0 : 65}}
+        />
+
+        <StartBar
+          onStart={this.onStart}
+          onCancel={this.onCancel}
+          onPause={this.onPause}
+          timerStarted={this.state.timerStarted}
         />
       </View>
     );
