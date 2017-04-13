@@ -16,7 +16,8 @@ import {
   FlatList,
   Navigator,
   ActionSheetIOS,
-  AsyncStorage
+  AsyncStorage,
+  StatusBar
 } from 'react-native';
 
 import NavigationBar from 'react-native-navbar';
@@ -32,13 +33,13 @@ function ListItem(props) {
       paddingRight: 15,
       marginLeft: 15,
       borderBottomWidth: 1,
-      borderBottomColor: "#ccc",
+      borderBottomColor: "#666",
       flexDirection: "row",
       justifyContent: "flex-start",
       alignItems: "center"
     }}>
-      <Text style={{fontSize: 16.5}}>{props.item.text}</Text>
-      <Text style={{fontSize: 16.5, color: "#8e8e93", marginLeft: 10}}>{props.item.weight}</Text>
+      <Text style={{fontSize: 16.5, color: "#ccc"}}>{props.item.text}</Text>
+      <Text style={{fontSize: 16.5, color: "#999", marginLeft: 10}}>{props.item.weight}</Text>
     </View>
   );
 }
@@ -69,7 +70,7 @@ class EditableListItem extends Component {
         paddingLeft: 36,
         marginLeft: 15,
         borderBottomWidth: 1,
-        borderBottomColor: "#ccc",
+        borderBottomColor: "#666",
         flexDirection: "row",
         justifyContent: "flex-start",
         alignItems: "center"
@@ -84,7 +85,7 @@ class EditableListItem extends Component {
           </View>
         }
         <TextInput
-          style={{fontSize: 16.5, flex: 1}}
+          style={{fontSize: 16.5, flex: 1, color: "#ccc"}}
           value={this.props.item.text}
           autoFocus={this.props.isLast}
           onChangeText={(text) => this.props.onChangeText('text', text)}
@@ -92,13 +93,13 @@ class EditableListItem extends Component {
           onSubmitEditing={() => this.weightInput.focus()}
         />
         <TextInput
-          style={{minWidth: 60, fontSize: 16.5, color: "#8e8e93", marginLeft: 10, alignContent: "flex-end"}}
+          style={{minWidth: 60, fontSize: 16.5, color: "#999", marginLeft: 10, alignContent: "flex-end"}}
           value={this.props.item.weight}
           onChangeText={(text) => this.props.onChangeText('weight', text)}
           ref={(node) => this.weightInput = node}
           returnKeyType="done"
         />
-        <Icon name="menu" size={28} color="#333" style={{position: "absolute", right: 10}} />
+        <Icon name="menu" size={28} color="#eee" style={{position: "absolute", right: 10}} />
       </View>
     );
   }
@@ -106,7 +107,42 @@ class EditableListItem extends Component {
 
 function StartBar () {
   return (
-    <View style={{flexDirection: "row", justifyContent: "center", alignItems: "center", height: 100, padding: 1, borderTopWidth: 1, borderTopColor: "#ccc", backgroundColor: "white"}}>
+    <View style={{
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      height: 100,
+      padding: 1,
+      backgroundColor: "#000",
+      borderTopWidth: 1,
+      borderTopColor: "#666",
+      paddingLeft: 20,
+      paddingRight: 20
+    }}>
+      <TouchableHighlight style={{
+        height: 80,
+        width: 80,
+        borderRadius: 50,
+        backgroundColor: "#333",
+        opacity: 0.7
+      }} underlayColor="#222"
+      onPress={() => {}}
+      >
+        <View style={{
+          borderColor: "#000",
+          borderWidth: 1,
+          height: 76,
+          width: 76,
+          marginTop: 2,
+          marginLeft: 2,
+          borderRadius: 76/2,
+          justifyContent: "center",
+          alignItems: "center"
+        }}>
+          <Text style={{fontSize: 16, color: "#eee", backgroundColor: "transparent"}}>Cancel</Text>
+        </View>
+      </TouchableHighlight>
+
       <TouchableHighlight style={{
         height: 80,
         width: 80,
@@ -116,7 +152,7 @@ function StartBar () {
       onPress={() => {}}
       >
         <View style={{
-          borderColor: "white",
+          borderColor: "#000",
           borderWidth: 1,
           height: 76,
           width: 76,
@@ -135,7 +171,7 @@ function StartBar () {
 
 function MainScreen (props) {
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: "#222"}}>
       <View style={{flex: 1}}>
         {props.hangs.map((item, index) => <ListItem key={index} item={item} />)}
       </View>
@@ -147,7 +183,7 @@ function MainScreen (props) {
 
 function EditScreen (props) {
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: "#222"}}>
       <View style={{flex: 1}}>
         {props.hangs.map((item, index) => {
           return <EditableListItem
@@ -264,27 +300,28 @@ export default class hbtimer extends Component {
           renderScene={route => route.renderScene(this)}
           ref={(node) => { this.navigator = node }}
           navigationBar={
-
             <NavigationBar
-              title={{ title: "HBTimer" }}
+              title={{ title: "HBTimer", style: { color: "#fff"} }}
               leftButton={
                 this.state.isEditing ?
-                  { title: "Done", handler: this.handleDone } :
-                  { title: "Edit", handler: this.handleEdit }
+                  { title: "Done", handler: this.handleDone, tintColor: "#ff9600" } :
+                  { title: "Edit", handler: this.handleEdit, tintColor: "#ff9600" }
               }
               rightButton={
                 <TouchableOpacity onPress={this.handleAdd}>
-                  <Icon name="plus" size={32} color="#0076ff" style={{marginTop: 6, marginRight: 8}} />
+                  <Icon name="plus" size={32} color="#ff9600" style={{marginTop: 6, marginRight: 8}} />
                 </TouchableOpacity>
               }
               containerStyle={{
                 borderBottomWidth: 1,
-                borderBottomColor: "#ccc",
+                borderBottomColor: "#666",
                 position: 'absolute',
                 top: 0,
                 left: 0,
                 right: 0,
+                backgroundColor: "#222"
               }}
+              statusBar={{ style: "light-content" }}
             />
 
           }
