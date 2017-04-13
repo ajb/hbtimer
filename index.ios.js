@@ -128,7 +128,7 @@ function StartBar (props) {
         width: 80,
         borderRadius: 50,
         backgroundColor: "#333",
-        opacity: props.timerStarted ? 1 : 0.7
+        opacity: props.workoutStatus === 'stopped' ? 0.7 : 1
       }} underlayColor="#222"
       onPress={props.onCancel}
       >
@@ -148,7 +148,7 @@ function StartBar (props) {
       </TouchableHighlight>
 
       {
-        props.timerStarted ? (
+        props.workoutStatus === 'started' ? (
           <TouchableHighlight style={{
             height: 80,
             width: 80,
@@ -178,7 +178,7 @@ function StartBar (props) {
             borderRadius: 50,
             backgroundColor: "#007100"
           }} underlayColor="#004f00"
-          onPress={props.onStart}
+          onPress={props.workoutStatus === 'paused' ? props.onResume : props.onStart}
           >
             <View style={{
               borderColor: "#000",
@@ -191,7 +191,9 @@ function StartBar (props) {
               justifyContent: "center",
               alignItems: "center"
             }}>
-              <Text style={{fontSize: 16, color: "#cbe6c4", backgroundColor: "transparent"}}>Start</Text>
+              <Text style={{fontSize: 16, color: "#cbe6c4", backgroundColor: "transparent"}}>
+                {props.workoutStatus === 'paused' ? 'Resume' : 'Start'}
+              </Text>
             </View>
           </TouchableHighlight>
         )
@@ -234,9 +236,15 @@ function EditScreen (props) {
 function WorkoutScreen (props) {
   return (
     <View style={{flex: 1, backgroundColor: "#222", paddingTop: 20}}>
-      <Text style={{color: "white"}}>Go Get em</Text>
+      <Text style={{color: "white"}}>{"Time remaining:"} {props.timeRemaining}</Text>
+      <Text style={{color: "white"}}>{"Active item:"} {formatItem(props.activeItem)}</Text>
+      <Text style={{color: "white"}}>{"Next item:"} {formatItem(props.nextItem)}</Text>
     </View>
   )
+}
+
+function formatItem(item) {
+  return `${item.text} ${item.weight || ''} (Rep ${item.rep}) (${item.type})`
 }
 
 const routes = {
@@ -250,7 +258,11 @@ const routes = {
                             onItemDelete={ctx.onItemDelete} />
   },
   workout: {
-    render: (ctx) => <WorkoutScreen />
+    render: (ctx) => <WorkoutScreen
+                        timeRemaining={ctx.state.workout.timeRemaining}
+                        activeItem={ctx.state.workout.items[ctx.state.workout.activeIndex]}
+                        nextItem={ctx.state.workout.items[ctx.state.workout.activeIndex + 1]}
+                        />
   }
 }
 
@@ -272,7 +284,7 @@ export default class hbtimer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      timerStarted: false,
+      workoutStatus: 'stopped',
       hangs: defaultHangs
     }
   }
@@ -300,13 +312,9 @@ export default class hbtimer extends Component {
       return hang.text.trim().length > 0
     })
 
-    if (newHangs.length === 0){
-      newHangs = [{ text: "Small edge half-crimp", weight: ""}];
+    if (newHangs.length > 0){
+      this.setState({hangs: newHangs})
     }
-
-    this.setState({
-      hangs: newHangs
-    })
   }
 
   handleEdit = () => {
@@ -332,16 +340,92 @@ export default class hbtimer extends Component {
   }
 
   onStart = () => {
+    this.configureWorkout()
     this.navigate('workout')
-    this.setState({timerStarted: true})
+    this.startWorkout()
+  }
+
+  onResume = () => {
+    this.startWorkout()
   }
 
   onCancel = () => {
+    this.stopWorkout()
     this.navigate('list')
   }
 
-  onPause = () => {
+  configureWorkout() {
+    let items = [
+      { type: 'rest', seconds: 10, text: 'Get ready…' }
+    ]
 
+    this.state.hangs.forEach((hang, hangIndex) => {
+      let oneThruSeven = new Array(7).fill(0).map((v, k) => k + 1)
+
+      oneThruSeven.forEach((num) => {
+        items.push({ type: 'hang', seconds: 7, rep: num, ...hang })
+
+        if (num === 7) {
+          if (hangIndex + 1 < this.state.hangs.seconds) {
+            items.push({ type: 'longrest', seconds: 180 })
+          }
+        } else {
+          items.push({ type: 'rest', seconds: 3, rep: num, ...hang })
+        }
+      });
+    });
+
+
+    this.setState({
+      workout: {
+        items: items,
+        activeIndex: 0,
+        timeRemaining: items[0].seconds
+      }
+    })
+  }
+
+  startWorkout() {
+    this.setState({ workoutStatus: 'started' })
+    this.workoutInterval = setInterval(this.workoutTick, 1000);
+  }
+
+  workoutTick = () => {
+    let newTimeRemaining = this.state.workout.timeRemaining - 1;
+
+    if (newTimeRemaining > 0) {
+      this.setState({workout: { ...this.state.workout, timeRemaining: newTimeRemaining }})
+    } else if (this.state.workout.activeIndex + 1 === this.state.workout.items.length) {
+      this.workoutDone()
+    } else {
+      let newIndex = this.state.workout.activeIndex + 1;
+
+      this.setState({
+        workout: {
+          ...this.state.workout,
+          activeIndex: newIndex,
+          timeRemaining: this.state.workout.items[newIndex].seconds
+        }
+      })
+    }
+  }
+
+  workoutDone() {
+    alert('done!')
+    this.navigate('list')
+    this.setState({ workoutStatus: 'stopped', workout: {} })
+    clearInterval(this.workoutInterval);
+  }
+
+  stopWorkout() {
+    this.navigate('list')
+    this.setState({ workoutStatus: 'stopped', workout: {} })
+    clearInterval(this.workoutInterval);
+  }
+
+  onPause = () => {
+    this.setState({ workoutStatus: 'paused' })
+    clearInterval(this.workoutInterval);
   }
 
   navigate (routeName) {
@@ -390,7 +474,8 @@ export default class hbtimer extends Component {
           onStart={this.onStart}
           onCancel={this.onCancel}
           onPause={this.onPause}
-          timerStarted={this.state.timerStarted}
+          onResume={this.onResume}
+          workoutStatus={this.state.workoutStatus}
         />
       </View>
     );
