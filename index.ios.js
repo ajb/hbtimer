@@ -238,7 +238,8 @@ function WorkoutScreen (props) {
     <View style={{flex: 1, backgroundColor: "#222", paddingTop: 20}}>
       <Text style={{color: "white"}}>{"Time remaining:"} {props.timeRemaining}</Text>
       <Text style={{color: "white"}}>{"Active item:"} {formatItem(props.activeItem)}</Text>
-      <Text style={{color: "white"}}>{"Next item:"} {formatItem(props.nextItem)}</Text>
+
+      { props.nextItem && <Text style={{color: "white"}}>{"Next item:"} {formatItem(props.nextItem)}</Text> }
     </View>
   )
 }
@@ -360,12 +361,13 @@ export default class hbtimer extends Component {
     ]
 
     this.state.hangs.forEach((hang, hangIndex) => {
-      let oneThruSeven = new Array(7).fill(0).map((v, k) => k + 1)
+      let hangsPerSet = 7;
+      let oneThruSeven = new Array(hangsPerSet).fill(0).map((v, k) => k + 1)
 
       oneThruSeven.forEach((num) => {
         items.push({ type: 'hang', seconds: 7, rep: num, ...hang })
 
-        if (num === 7) {
+        if (num === hangsPerSet) {
           if (hangIndex + 1 < this.state.hangs.seconds) {
             items.push({ type: 'longrest', seconds: 180 })
           }
@@ -411,10 +413,10 @@ export default class hbtimer extends Component {
   }
 
   workoutDone() {
+    clearInterval(this.workoutInterval);
     alert('done!')
     this.navigate('list')
-    this.setState({ workoutStatus: 'stopped', workout: {} })
-    clearInterval(this.workoutInterval);
+    this.setState({ workoutStatus: 'stopped' })
   }
 
   stopWorkout() {
