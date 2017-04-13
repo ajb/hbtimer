@@ -18,10 +18,10 @@ import {
 
 import NavigationBar from 'react-native-navbar';
 
-import Icon from 'react-native-vector-icons/SimpleLineIcons';
+import Icon from 'react-native-vector-icons/Entypo';
 const plusIcon = (
   <TouchableOpacity>
-    <Icon name="plus" size={24} color="#037ac7" style={{marginTop: 8, marginRight: 10}} />
+    <Icon name="plus" size={32} color="#0076ff" style={{marginTop: 6, marginRight: 10}} />
   </TouchableOpacity>
 )
 
