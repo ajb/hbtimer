@@ -15,7 +15,8 @@ import {
   TouchableHighlight,
   FlatList,
   Navigator,
-  ActionSheetIOS
+  ActionSheetIOS,
+  AsyncStorage
 } from 'react-native';
 
 import NavigationBar from 'react-native-navbar';
@@ -43,6 +44,10 @@ function ListItem(props) {
 }
 
 class EditableListItem extends Component {
+  constructor(props) {
+    super(props);
+  }
+
   onDelete = () => {
     ActionSheetIOS.showActionSheetWithOptions({
       options: ['Delete', 'Cancel'],
@@ -50,7 +55,9 @@ class EditableListItem extends Component {
       destructiveButtonIndex: 0
     },
     (buttonIndex) => {
-      alert(buttonIndex);
+      if (buttonIndex === 0) {
+        this.props.onItemDelete()
+      }
     });
   }
 
@@ -70,8 +77,21 @@ class EditableListItem extends Component {
         <TouchableOpacity style={{position: "absolute", left: 0}} onPress={this.onDelete}>
           <Icon name="circle-with-minus" size={28} color="#ff3824" />
         </TouchableOpacity>
-        <TextInput style={{fontSize: 16.5, flex: 1}} value={this.props.item.text} autoFocus={this.props.isLast} />
-        <TextInput style={{minWidth: 60, fontSize: 16.5, color: "#8e8e93", marginLeft: 10, alignContent: "flex-end"}} value={this.props.item.weight} />
+        <TextInput
+          style={{fontSize: 16.5, flex: 1}}
+          value={this.props.item.text}
+          autoFocus={this.props.isLast}
+          onChangeText={(text) => this.props.onChangeText('text', text)}
+          returnKeyType="next"
+          onSubmitEditing={() => this.weightInput.focus()}
+        />
+        <TextInput
+          style={{minWidth: 60, fontSize: 16.5, color: "#8e8e93", marginLeft: 10, alignContent: "flex-end"}}
+          value={this.props.item.weight}
+          onChangeText={(text) => this.props.onChangeText('weight', text)}
+          ref={(node) => this.weightInput = node}
+          returnKeyType="done"
+        />
         <Icon name="menu" size={28} color="#333" style={{position: "absolute", right: 10}} />
       </View>
     );
@@ -123,7 +143,17 @@ function EditScreen (props) {
   return (
     <View style={{flex: 1}}>
       <View style={{flex: 1}}>
-        {props.hangs.map((item, index) => <EditableListItem key={index} item={item} isLast={index == props.hangs.length - 1} />)}
+        {props.hangs.map((item, index) => {
+          return <EditableListItem
+                    key={index}
+                    item={item}
+                    isLast={index == props.hangs.length - 1}
+                    onChangeText={(attr, text) => {
+                      props.onChangeText(index, attr, text)
+                    }}
+                    onItemDelete={() => props.onItemDelete(index) }
+                  />
+        })}
       </View>
       <StartBar />
     </View>
@@ -137,20 +167,62 @@ const routes = [
   },
   {
     title: 'Edit',
-    renderScene: (ctx) => <EditScreen hangs={ctx.state.hangs} />
+    renderScene: (ctx) => <EditScreen
+                            hangs={ctx.state.hangs}
+                            onChangeText={ctx.onChangeText}
+                            onItemDelete={ctx.onItemDelete} />
   }
 ]
 
 export default class hbtimer extends Component {
+  storageKey = 'hbtimer-hangs';
+
+  componentDidMount() {
+    AsyncStorage.getItem(this.storageKey).then((value) => {
+      if (value) {
+        this.setState({hangs: JSON.parse(value)})
+      }
+    })
+  }
+
+  componentDidUpdate() {
+    AsyncStorage.setItem(this.storageKey, JSON.stringify(this.state.hangs));
+  }
+
   constructor(props) {
     super(props);
     this.state = {
       isEditing: false,
       hangs: [
-        { text: "3 finger large edge", weight: "-20lbs" },
-        { text: "Sloper", weight: "-30lbs" }
+        { text: "Small edge half-crimp", weight: "-10lbs" },
       ]
     }
+  }
+
+  onChangeText = (index, attr, text) => {
+    this.setState({
+      hangs: this.state.hangs.map((hang, idx) => {
+        if (idx === index) {
+          return { ...hang, [attr]: text }
+        } else {
+          return hang;
+        }
+      })
+    })
+  }
+
+  onItemDelete = (index) => {
+    this.setState({
+      hangs: this.state.hangs.filter((hang, idx) => idx !== index)
+    })
+  }
+
+  removeBlankHangs () {
+    this.setState({
+      hangs: this.state.hangs.filter(hang => {
+        return hang.text.trim().length > 0
+      })
+    })
   }
 
   handleEdit = () => {
@@ -161,6 +233,7 @@ export default class hbtimer extends Component {
   handleDone = () => {
     this.navigator.replace(routes[0])
     this.setState({isEditing: false})
+    this.removeBlankHangs()
   }
 
   handleAdd = () => {
