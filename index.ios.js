@@ -22,18 +22,7 @@ import NavigationBar from 'react-native-navbar';
 
 import Icon from 'react-native-vector-icons/Entypo';
 
-const plusIcon = (
-  <TouchableOpacity>
-    <Icon name="plus" size={32} color="#0076ff" style={{marginTop: 6, marginRight: 8}} />
-  </TouchableOpacity>
-)
-
 let navigator;
-
-const dummyHangs = [
-  { key: 0, text: "3 finger large edge", weight: "-20lbs" },
-  { key: 1, text: "Sloper", weight: "-30lbs" }
-]
 
 function ListItem(props) {
   return (
@@ -81,7 +70,7 @@ class EditableListItem extends Component {
         <TouchableOpacity style={{position: "absolute", left: 0}} onPress={this.onDelete}>
           <Icon name="circle-with-minus" size={28} color="#ff3824" />
         </TouchableOpacity>
-        <TextInput style={{fontSize: 16.5, flex: 1}} value={this.props.item.text} />
+        <TextInput style={{fontSize: 16.5, flex: 1}} value={this.props.item.text} autoFocus={this.props.isLast} />
         <TextInput style={{minWidth: 60, fontSize: 16.5, color: "#8e8e93", marginLeft: 10, alignContent: "flex-end"}} value={this.props.item.weight} />
         <Icon name="menu" size={28} color="#333" style={{position: "absolute", right: 10}} />
       </View>
@@ -118,35 +107,50 @@ function StartBar () {
   )
 }
 
-const mainScreen = (
-  <View style={{flex: 1}}>
+function MainScreen (props) {
+  return (
     <View style={{flex: 1}}>
-      {dummyHangs.map((item, index) => <ListItem key={index} item={item} />)}
+      <View style={{flex: 1}}>
+        {props.hangs.map((item, index) => <ListItem key={index} item={item} />)}
+      </View>
+
+      <StartBar />
     </View>
+  )
+}
 
-    <StartBar />
-  </View>
-)
-
-const editScreen = (
-  <View style={{flex: 1}}>
+function EditScreen (props) {
+  return (
     <View style={{flex: 1}}>
-      {dummyHangs.map((item, index) => <EditableListItem key={index} item={item} />)}
+      <View style={{flex: 1}}>
+        {props.hangs.map((item, index) => <EditableListItem key={index} item={item} isLast={index == props.hangs.length - 1} />)}
+      </View>
+      <StartBar />
     </View>
-
-    <StartBar />
-  </View>
-)
+  )
+}
 
 const routes = [
-  { title: 'Main', component: mainScreen },
-  { title: 'Edit', component: editScreen }
+  {
+    title: 'Main',
+    renderScene: (ctx) => <MainScreen hangs={ctx.state.hangs} />
+  },
+  {
+    title: 'Edit',
+    renderScene: (ctx) => <EditScreen hangs={ctx.state.hangs} />
+  }
 ]
 
 export default class hbtimer extends Component {
   constructor(props) {
     super(props);
-    this.state = { isEditing: false };
+    this.state = {
+      isEditing: false,
+      hangs: [
+        { text: "3 finger large edge", weight: "-20lbs" },
+        { text: "Sloper", weight: "-30lbs" }
+      ]
+    }
   }
 
   handleEdit = () => {
@@ -159,12 +163,25 @@ export default class hbtimer extends Component {
     this.setState({isEditing: false})
   }
 
+  handleAdd = () => {
+    if (!this.state.isEditing){
+      this.handleEdit();
+    }
+
+    this.setState({
+      hangs: [
+        ...this.state.hangs,
+        { text: "", weight: "" }
+      ]
+    })
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Navigator
           initialRoute={routes[0]}
-          renderScene={(route, navigator) => route.component}
+          renderScene={route => route.renderScene(this)}
           ref={(node) => { this.navigator = node }}
           navigationBar={
 
@@ -175,7 +192,11 @@ export default class hbtimer extends Component {
                   { title: "Done", handler: this.handleDone } :
                   { title: "Edit", handler: this.handleEdit }
               }
-              rightButton={plusIcon}
+              rightButton={
+                <TouchableOpacity onPress={this.handleAdd}>
+                  <Icon name="plus" size={32} color="#0076ff" style={{marginTop: 6, marginRight: 8}} />
+                </TouchableOpacity>
+              }
               containerStyle={{
                 borderBottomWidth: 1,
                 borderBottomColor: "#ccc",
