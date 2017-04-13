@@ -74,9 +74,15 @@ class EditableListItem extends Component {
         justifyContent: "flex-start",
         alignItems: "center"
       }}>
-        <TouchableOpacity style={{position: "absolute", left: 0}} onPress={this.onDelete}>
-          <Icon name="circle-with-minus" size={28} color="#ff3824" />
-        </TouchableOpacity>
+        {this.props.showDelete ?
+          <TouchableOpacity style={{position: "absolute", left: 0}} onPress={this.onDelete}>
+            <Icon name="circle-with-minus" size={28} color="#ff3824" />
+          </TouchableOpacity>
+        :
+          <View style={{position: "absolute", left: 0, opacity: 0.3}}>
+            <Icon name="circle-with-minus" size={28} color="#ff3824" />
+          </View>
+        }
         <TextInput
           style={{fontSize: 16.5, flex: 1}}
           value={this.props.item.text}
@@ -146,6 +152,7 @@ function EditScreen (props) {
         {props.hangs.map((item, index) => {
           return <EditableListItem
                     key={index}
+                    showDelete={props.hangs.length > 1}
                     item={item}
                     isLast={index == props.hangs.length - 1}
                     onChangeText={(attr, text) => {
