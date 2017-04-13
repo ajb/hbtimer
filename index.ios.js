@@ -11,6 +11,7 @@ import {
   Text,
   TextInput,
   View,
+  TouchableWithoutFeedback,
   TouchableOpacity,
   TouchableHighlight,
   FlatList,
@@ -244,15 +245,27 @@ function WorkoutScreen (props) {
   )
 }
 
+function DoneScreen (props) {
+  return (
+    <TouchableWithoutFeedback onPress={props.onClear}>
+      <View style={{flex: 1, backgroundColor: "#222", paddingTop: 20}} >
+        <Text style={{color: "#fff"}}>Nice job! Touch anywhere to dismiss.</Text>
+      </View>
+    </TouchableWithoutFeedback>
+  )
+}
+
 function formatItem(item) {
   return `${item.text} ${item.weight || ''} (Rep ${item.rep}) (${item.type})`
 }
 
 const routes = {
   list: {
+    usesNavbar: true,
     render: (ctx) => <MainScreen hangs={ctx.state.hangs} />
   },
   edit: {
+    usesNavbar: true,
     render: (ctx) => <EditScreen
                             hangs={ctx.state.hangs}
                             onChangeText={ctx.onChangeText}
@@ -264,6 +277,9 @@ const routes = {
                         activeItem={ctx.state.workout.items[ctx.state.workout.activeIndex]}
                         nextItem={ctx.state.workout.items[ctx.state.workout.activeIndex + 1]}
                         />
+  },
+  done: {
+    render: (ctx) => <DoneScreen onClear={() => ctx.navigate('list')} />
   }
 }
 
@@ -271,6 +287,8 @@ export default class hbtimer extends Component {
   storageKey = 'hbtimer-hangs';
 
   componentDidMount() {
+    this.setState({ currentRoute: 'list', currentRouteUsesNavbar: true })
+
     AsyncStorage.getItem(this.storageKey).then((value) => {
       if (value) {
         this.setState({hangs: JSON.parse(value)})
@@ -414,9 +432,8 @@ export default class hbtimer extends Component {
 
   workoutDone() {
     clearInterval(this.workoutInterval);
-    alert('done!')
-    this.navigate('list')
-    this.setState({ workoutStatus: 'stopped' })
+    this.navigate('done')
+    this.setState({ workoutStatus: 'stopped', workout: {} })
   }
 
   stopWorkout() {
@@ -431,8 +448,11 @@ export default class hbtimer extends Component {
   }
 
   navigate (routeName) {
-    this.navigator.replace(routes[routeName])
-    this.setState({currentRoute: routeName})
+    if (this.state.currentRoute !== routeName) {
+      this.navigator.replace(routes[routeName])
+    }
+
+    this.setState({currentRoute: routeName, currentRouteUsesNavbar: routes[routeName].usesNavbar})
   }
 
   render() {
@@ -440,10 +460,10 @@ export default class hbtimer extends Component {
       <View style={styles.container}>
         <Navigator
           initialRoute={routes.list}
-          renderScene={(route => route.render(this))}
+          renderScene={route => route.render(this)}
           ref={(node) => { this.navigator = node }}
           navigationBar={
-            this.state.currentRoute === 'workout' ? null :
+            this.state.currentRouteUsesNavbar ?
             <NavigationBar
               title={{ title: "HBTimer", style: { color: "#fff"} }}
               leftButton={
@@ -466,19 +486,20 @@ export default class hbtimer extends Component {
                 backgroundColor: "#222"
               }}
               statusBar={{ style: "light-content" }}
-            />
-
+            /> : null
           }
-          sceneStyle={{paddingTop: this.state.currentRoute === 'workout' ? 0 : 65}}
+          sceneStyle={{paddingTop: this.state.currentRouteUsesNavbar ? 65 : 0}}
         />
 
-        <StartBar
-          onStart={this.onStart}
-          onCancel={this.onCancel}
-          onPause={this.onPause}
-          onResume={this.onResume}
-          workoutStatus={this.state.workoutStatus}
-        />
+        { this.state.currentRoute === 'done' ? null :
+          <StartBar
+            onStart={this.onStart}
+            onCancel={this.onCancel}
+            onPause={this.onPause}
+            onResume={this.onResume}
+            workoutStatus={this.state.workoutStatus}
+          />
+        }
       </View>
     );
   }
