@@ -311,8 +311,9 @@ function WorkoutScreen (props) {
 function DoneScreen (props) {
   return (
     <TouchableWithoutFeedback onPress={props.onClear}>
-      <View style={{flex: 1, backgroundColor: "#222", paddingTop: 20}} >
-        <Text style={{color: "#fff"}}>Nice job! Touch anywhere to dismiss.</Text>
+      <View style={{flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#222", paddingTop: 20}} >
+        <Text style={{color: "#fff", fontSize: 40}}>Nice job!</Text>
+        <Text style={{color: "#fff"}}>Touch anywhere to dismiss.</Text>
       </View>
     </TouchableWithoutFeedback>
   )
