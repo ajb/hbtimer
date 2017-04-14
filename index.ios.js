@@ -234,13 +234,74 @@ function EditScreen (props) {
   )
 }
 
-function WorkoutScreen (props) {
-  return (
-    <View style={{flex: 1, backgroundColor: "#222", paddingTop: 20}}>
-      <Text style={{color: "white"}}>{"Time remaining:"} {props.timeRemaining}</Text>
-      <Text style={{color: "white"}}>{"Active item:"} {formatItem(props.activeItem)}</Text>
+function formatWorkoutItem (item) {
+  switch (item.type) {
+    case 'initialRest':
+      return {
+        text: "Get ready…"
+      }
+    case 'longRest':
+      return {
+        text: "Rest"
+      }
+    case 'rest':
+      return {
+        text: "Rest",
+        subtext: `${item.text} (${item.weight || ''})`
+      }
+    case 'hang':
+      return {
+        text: "Hang",
+        subtext: `${item.text} (${item.weight || ''})`
+      }
+  }
+}
 
-      { props.nextItem && <Text style={{color: "white"}}>{"Next item:"} {formatItem(props.nextItem)}</Text> }
+function padLeft(string, pad, length) {
+  return (new Array(length + 1).join(pad) + string).slice(-length)
+}
+
+function formatTime (seconds) {
+  let minutes = Math.floor(seconds / 60)
+  let remainingSeconds = seconds - minutes * 60
+  return `${minutes}:${padLeft(remainingSeconds, '0', 2)}`
+}
+
+function WorkoutScreen (props) {
+  const stylesByType = {
+    initialRest: {
+      backgroundColor: "#222"
+    },
+    longRest: {
+      backgroundColor: "#222"
+    },
+    hang: {
+      backgroundColor: "#083506"
+    },
+    rest: {
+      backgroundColor: "#7e1b12"
+    }
+  }
+
+  return (
+    <View style={Object.assign({}, {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      paddingTop: 40
+    }, stylesByType[props.activeItem.type])}>
+      <Text style={{color: "white", fontSize: 50, position: 'absolute', top: 40}}>{formatTime(props.timeRemaining)}</Text>
+      <Text style={{color: "white", fontSize: 60}}>
+        {formatWorkoutItem(props.activeItem).text}
+        {props.activeItem.rep ? ` #${props.activeItem.rep}` : ''}
+      </Text>
+      <Text style={{color: "white", fontSize: 20}}>{formatWorkoutItem(props.activeItem).subtext}</Text>
+
+      { props.nextText &&
+        <Text style={{color: "white", position: 'absolute', bottom: 20}}>
+          {"Next: "}
+          <Text style={{fontWeight: 'bold'}}>{props.nextText}</Text>
+        </Text> }
     </View>
   )
 }
@@ -253,10 +314,6 @@ function DoneScreen (props) {
       </View>
     </TouchableWithoutFeedback>
   )
-}
-
-function formatItem(item) {
-  return `${item.text} ${item.weight || ''} (Rep ${item.rep}) (${item.type})`
 }
 
 const routes = {
@@ -275,7 +332,7 @@ const routes = {
     render: (ctx) => <WorkoutScreen
                         timeRemaining={ctx.state.workout.timeRemaining}
                         activeItem={ctx.state.workout.items[ctx.state.workout.activeIndex]}
-                        nextItem={ctx.state.workout.items[ctx.state.workout.activeIndex + 1]}
+                        nextText={ctx.getNextSetText()}
                         />
   },
   done: {
@@ -326,13 +383,15 @@ export default class hbtimer extends Component {
     })
   }
 
-  removeBlankHangs () {
+  removeBlankHangs (cb) {
     let newHangs = this.state.hangs.filter(hang => {
       return hang.text.trim().length > 0
     })
 
     if (newHangs.length > 0){
-      this.setState({hangs: newHangs})
+      this.setState({hangs: newHangs}, cb)
+    } else {
+      cb()
     }
   }
 
@@ -359,9 +418,11 @@ export default class hbtimer extends Component {
   }
 
   onStart = () => {
-    this.configureWorkout()
-    this.navigate('workout')
-    this.startWorkout()
+    this.removeBlankHangs(() => {
+      this.configureWorkout()
+      this.navigate('workout')
+      this.startWorkout()
+    })
   }
 
   onResume = () => {
@@ -373,9 +434,29 @@ export default class hbtimer extends Component {
     this.navigate('list')
   }
 
+  getNextSetFirstItem(tryAdd = 1) {
+    let currentHangIndex = this.state.workout.items[this.state.workout.activeIndex].hangIndex;
+
+    let nextItem = this.state.workout.items[this.state.workout.activeIndex + tryAdd];
+
+    if (!nextItem) {
+      return;
+    } else if (nextItem.hangIndex !== undefined && (currentHangIndex === undefined || (nextItem.hangIndex > currentHangIndex))) {
+      return nextItem;
+    } else {
+      return this.getNextSetFirstItem(tryAdd + 1)
+    }
+  }
+
+  getNextSetText() {
+    if (this.getNextSetFirstItem()) {
+      return formatWorkoutItem(this.getNextSetFirstItem()).subtext;
+    }
+  }
+
   configureWorkout() {
     let items = [
-      { type: 'rest', seconds: 10, text: 'Get ready…' }
+      { type: 'initialRest', seconds: 10 }
     ]
 
     this.state.hangs.forEach((hang, hangIndex) => {
@@ -383,14 +464,14 @@ export default class hbtimer extends Component {
       let oneThruSeven = new Array(hangsPerSet).fill(0).map((v, k) => k + 1)
 
       oneThruSeven.forEach((num) => {
-        items.push({ type: 'hang', seconds: 7, rep: num, ...hang })
+        items.push({ type: 'hang', seconds: 7, rep: num, hangIndex: hangIndex, ...hang })
 
         if (num === hangsPerSet) {
-          if (hangIndex + 1 < this.state.hangs.seconds) {
-            items.push({ type: 'longrest', seconds: 180 })
+          if (hangIndex + 1 < this.state.hangs.length) {
+            items.push({ type: 'longRest', seconds: 180 })
           }
         } else {
-          items.push({ type: 'rest', seconds: 3, rep: num, ...hang })
+          items.push({ type: 'rest', seconds: 3, rep: num, hangIndex: hangIndex, ...hang })
         }
       });
     });
