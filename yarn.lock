@@ -2923,6 +2923,10 @@ react-native-navbar@^1.7.1:
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/react-native-navbar/-/react-native-navbar-1.7.1.tgz#de0e6f8c2156c7e984bb43c76732bd2437b7df0f"
 
+react-native-timer@^1.3.1:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/react-native-timer/-/react-native-timer-1.3.1.tgz#c1d03cdad596136cd81b9d3684f2161089ea1ab7"
+
 react-native-vector-icons@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-4.0.1.tgz#39c05d2e775deeb98d5afdbda5dcf67965ff674f"

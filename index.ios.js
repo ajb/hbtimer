@@ -23,6 +23,8 @@ import {
 
 import NavigationBar from 'react-native-navbar';
 
+import Timer from 'react-native-timer'
+
 import Icon from 'react-native-vector-icons/Entypo';
 
 let navigator;
@@ -488,7 +490,7 @@ export default class hbtimer extends Component {
 
   startWorkout() {
     this.setState({ workoutStatus: 'started' })
-    this.workoutInterval = setInterval(this.workoutTick, 1000);
+    Timer.setInterval('workoutTimer', this.workoutTick, 1000)
   }
 
   workoutTick = () => {
@@ -511,8 +513,12 @@ export default class hbtimer extends Component {
     }
   }
 
+  clearTimer() {
+    Timer.clearInterval('workoutTimer')
+  }
+
   workoutDone() {
-    clearInterval(this.workoutInterval);
+    this.clearTimer()
     this.navigate('done')
     this.setState({ workoutStatus: 'stopped', workout: {} })
   }
@@ -520,12 +526,12 @@ export default class hbtimer extends Component {
   stopWorkout() {
     this.navigate('list')
     this.setState({ workoutStatus: 'stopped', workout: {} })
-    clearInterval(this.workoutInterval);
+    this.clearTimer()
   }
 
   onPause = () => {
     this.setState({ workoutStatus: 'paused' })
-    clearInterval(this.workoutInterval);
+    this.clearTimer()
   }
 
   navigate (routeName) {
