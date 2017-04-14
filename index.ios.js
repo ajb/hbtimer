@@ -290,7 +290,7 @@ function WorkoutScreen (props) {
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      paddingTop: 40
+      paddingTop: 30
     }, stylesByType[props.activeItem.type])}>
       <Text style={{color: "white", fontSize: 50, position: 'absolute', top: 40}}>{formatTime(props.timeRemaining)}</Text>
       <Text style={{color: "white", fontSize: 60}}>
