@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableWithoutFeedback } from 'react-native';
 
 export default {
+  hideStartBar: true,
   render: (ctx) => {
     return (
       <TouchableWithoutFeedback onPress={() => ctx.navigate('list')}>

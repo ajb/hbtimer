@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import padLeft from '../helpers/padLeft'
 
 const stylesByType = {
-  initialRest: {
+  initialCountdown: {
     backgroundColor: "#222"
   },
   longRest: {
@@ -25,7 +25,7 @@ function formatTime (seconds) {
 
 function formatWorkoutItem (item) {
   switch (item.type) {
-    case 'initialRest':
+    case 'initialCountdown':
       return {
         text: "Get ready…"
       }
