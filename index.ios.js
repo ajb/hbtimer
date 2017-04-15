@@ -131,9 +131,9 @@ export default class hbtimer extends Component {
       let nextItem = this.state.workout.items[currentItemIndex + increment];
 
       if (!nextItem) {
-        return;
+        return
       } else if (nextItem.hangIndex !== undefined && (currentHangIndex === undefined || (nextItem.hangIndex > currentHangIndex))) {
-        return nextItem;
+        return nextItem
       } else {
         increment++
       }
