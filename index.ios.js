@@ -27,90 +27,13 @@ import Timer from 'react-native-timer'
 
 import Icon from 'react-native-vector-icons/Entypo';
 
+import * as routes from './routes'
+
 let navigator;
 
 const defaultHangs = [
   { text: "Small edge half-crimp", weight: "-10lbs" },
 ]
-
-function ListItem(props) {
-  return (
-    <View style={{
-      height: 50,
-      paddingRight: 15,
-      marginLeft: 15,
-      borderBottomWidth: 1,
-      borderBottomColor: "#666",
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center"
-    }}>
-      <Text style={{fontSize: 17.5, color: "#ccc"}}>{props.item.text}</Text>
-      <Text style={{fontSize: 17.5, color: "#999", marginLeft: 10}}>{props.item.weight}</Text>
-    </View>
-  );
-}
-
-class EditableListItem extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  onDelete = () => {
-    ActionSheetIOS.showActionSheetWithOptions({
-      options: ['Delete', 'Cancel'],
-      cancelButtonIndex: 1,
-      destructiveButtonIndex: 0
-    },
-    (buttonIndex) => {
-      if (buttonIndex === 0) {
-        this.props.onItemDelete()
-      }
-    });
-  }
-
-  render() {
-    return (
-      <View style={{
-        height: 50,
-        paddingRight: 46,
-        paddingLeft: 36,
-        marginLeft: 15,
-        borderBottomWidth: 1,
-        borderBottomColor: "#666",
-        flexDirection: "row",
-        justifyContent: "flex-start",
-        alignItems: "center"
-      }}>
-        {this.props.showDelete ?
-          <TouchableOpacity style={{position: "absolute", left: 0}} onPress={this.onDelete}>
-            <Icon name="circle-with-minus" size={28} color="#ff3824" />
-          </TouchableOpacity>
-        :
-          <View style={{position: "absolute", left: 0, opacity: 0.3}}>
-            <Icon name="circle-with-minus" size={28} color="#ff3824" />
-          </View>
-        }
-        <TextInput
-          style={{fontSize: 17.5, flex: 1, color: "#ccc"}}
-          value={this.props.item.text}
-          autoFocus={this.props.isLast}
-          onChangeText={(text) => this.props.onChangeText('text', text)}
-          returnKeyType="next"
-          onSubmitEditing={() => this.weightInput.focus()}
-        />
-        <TextInput
-          style={{textAlign: 'right', minWidth: 60, fontSize: 17.5, color: "#999", marginLeft: 10, alignContent: "flex-end"}}
-          value={this.props.item.weight}
-          onChangeText={(text) => this.props.onChangeText('weight', text)}
-          ref={(node) => this.weightInput = node}
-          returnKeyType="done"
-        />
-        <Icon name="menu" size={28} color="#eee" style={{position: "absolute", right: 10}} />
-      </View>
-    );
-  }
-}
 
 function StartBar (props) {
   return (
@@ -205,149 +128,15 @@ function StartBar (props) {
   )
 }
 
-function MainScreen (props) {
-  return (
-    <View style={{flex: 1, backgroundColor: "#222"}}>
-      <View style={{flex: 1}}>
-        {props.hangs.map((item, index) => <ListItem key={index} item={item} />)}
-      </View>
-    </View>
-  )
-}
-
-function EditScreen (props) {
-  return (
-    <View style={{flex: 1, backgroundColor: "#222"}}>
-      <View style={{flex: 1}}>
-        {props.hangs.map((item, index) => {
-          return <EditableListItem
-                    key={index}
-                    showDelete={props.hangs.length > 1}
-                    item={item}
-                    isLast={index == props.hangs.length - 1}
-                    onChangeText={(attr, text) => {
-                      props.onChangeText(index, attr, text)
-                    }}
-                    onItemDelete={() => props.onItemDelete(index) }
-                  />
-        })}
-      </View>
-    </View>
-  )
-}
-
-function formatWorkoutItem (item) {
-  switch (item.type) {
-    case 'initialRest':
-      return {
-        text: "Get ready…"
-      }
-    case 'longRest':
-      return {
-        text: "Rest"
-      }
-    case 'rest':
-      return {
-        text: "Rest",
-        subtext: `${item.text} (${item.weight || ''})`
-      }
-    case 'hang':
-      return {
-        text: "Hang",
-        subtext: `${item.text} (${item.weight || ''})`
-      }
-  }
-}
-
-function padLeft(string, pad, length) {
-  return (new Array(length + 1).join(pad) + string).slice(-length)
-}
-
-function formatTime (seconds) {
-  let minutes = Math.floor(seconds / 60)
-  let remainingSeconds = seconds - minutes * 60
-  return `${minutes}:${padLeft(remainingSeconds, '0', 2)}`
-}
-
-function WorkoutScreen (props) {
-  const stylesByType = {
-    initialRest: {
-      backgroundColor: "#222"
-    },
-    longRest: {
-      backgroundColor: "#222"
-    },
-    hang: {
-      backgroundColor: "#083506"
-    },
-    rest: {
-      backgroundColor: "#7e1b12"
-    }
-  }
-
-  return (
-    <View style={Object.assign({}, {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      paddingTop: 30
-    }, stylesByType[props.activeItem.type])}>
-      <Text style={{color: "white", fontSize: 50, position: 'absolute', top: 40}}>{formatTime(props.timeRemaining)}</Text>
-      <Text style={{color: "white", fontSize: 60}}>
-        {formatWorkoutItem(props.activeItem).text}
-        {props.activeItem.rep ? ` #${props.activeItem.rep}` : ''}
-      </Text>
-      <Text style={{color: "white", fontSize: 20}}>{formatWorkoutItem(props.activeItem).subtext}</Text>
-
-      { props.nextText &&
-        <Text style={{color: "white", position: 'absolute', bottom: 20}}>
-          {"Next: "}
-          <Text style={{fontWeight: 'bold'}}>{props.nextText}</Text>
-        </Text> }
-    </View>
-  )
-}
-
-function DoneScreen (props) {
-  return (
-    <TouchableWithoutFeedback onPress={props.onClear}>
-      <View style={{flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#222", paddingTop: 20}} >
-        <Text style={{color: "#fff", fontSize: 40}}>Nice job!</Text>
-        <Text style={{color: "#fff"}}>Touch anywhere to dismiss.</Text>
-      </View>
-    </TouchableWithoutFeedback>
-  )
-}
-
-const routes = {
-  list: {
-    usesNavbar: true,
-    render: (ctx) => <MainScreen hangs={ctx.state.hangs} />
-  },
-  edit: {
-    usesNavbar: true,
-    render: (ctx) => <EditScreen
-                            hangs={ctx.state.hangs}
-                            onChangeText={ctx.onChangeText}
-                            onItemDelete={ctx.onItemDelete} />
-  },
-  workout: {
-    render: (ctx) => <WorkoutScreen
-                        timeRemaining={ctx.state.workout.timeRemaining}
-                        activeItem={ctx.state.workout.items[ctx.state.workout.activeIndex]}
-                        nextText={ctx.getNextSetText()}
-                        />
-  },
-  done: {
-    render: (ctx) => <DoneScreen onClear={() => ctx.navigate('list')} />
-  }
-}
-
 export default class hbtimer extends Component {
-  storageKey = 'hbtimer-hangs';
+  storageKey = 'hbtimer-hangs'
+  defaultRoute = 'list'
 
   componentDidMount() {
-    this.setState({ currentRoute: 'list', currentRouteUsesNavbar: true })
+    this.setState({
+      currentRoute: routes[this.defaultRoute],
+      currentRouteUsesNavbar: routes[this.defaultRoute].usesNavbar
+    })
 
     AsyncStorage.getItem(this.storageKey).then((value) => {
       if (value) {
@@ -437,7 +226,7 @@ export default class hbtimer extends Component {
     this.navigate('list')
   }
 
-  getNextSetFirstItem(tryAdd = 1) {
+  getFirstItemFromNextSet(tryAdd = 1) {
     let currentHangIndex = this.state.workout.items[this.state.workout.activeIndex].hangIndex;
 
     let nextItem = this.state.workout.items[this.state.workout.activeIndex + tryAdd];
@@ -447,13 +236,7 @@ export default class hbtimer extends Component {
     } else if (nextItem.hangIndex !== undefined && (currentHangIndex === undefined || (nextItem.hangIndex > currentHangIndex))) {
       return nextItem;
     } else {
-      return this.getNextSetFirstItem(tryAdd + 1)
-    }
-  }
-
-  getNextSetText() {
-    if (this.getNextSetFirstItem()) {
-      return formatWorkoutItem(this.getNextSetFirstItem()).subtext;
+      return this.getFirstItemFromNextSet(tryAdd + 1)
     }
   }
 
