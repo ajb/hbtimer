@@ -16,12 +16,8 @@ import NavBar from './components/NavBar'
 import StartBar from './components/StartBar'
 import * as routes from './routes'
 import * as workoutStatuses from './constants/workoutStatuses'
+import calculateWorkoutItems from './helpers/calculateWorkoutItems'
 
-const INITIAL_COUNTDOWN_SECONDS = 10
-const HANGS_PER_SET = 7
-const HANG_SECONDS = 7
-const REST_SECONDS = 3
-const LONG_REST_SECONDS = 180
 const DEFAULT_ROUTE = 'list'
 const DEFAULT_HANGS = [{ text: "Small edge half-crimp", weight: "-10lbs" }]
 const STORAGE_KEY = 'hbtimer-hangs';
@@ -102,7 +98,16 @@ export default class hbtimer extends Component {
 
   onStart = () => {
     this.removeBlankHangs(() => {
-      this.configureWorkout()
+      let items = calculateWorkoutItems(this.state.hangs)
+
+      this.setState({
+        workout: {
+          items: items,
+          activeIndex: 0,
+          timeRemaining: items[0].seconds
+        }
+      })
+
       this.navigate('workout')
       this.startWorkout()
     })
@@ -129,37 +134,6 @@ export default class hbtimer extends Component {
     } else {
       return this.getFirstItemFromNextSet(tryAdd + 1)
     }
-  }
-
-  configureWorkout() {
-    let items = [
-      { type: 'initialCountdown', seconds: INITIAL_COUNTDOWN_SECONDS }
-    ]
-
-    this.state.hangs.forEach((hang, hangIndex) => {
-      let reps = new Array(HANGS_PER_SET).fill(0).map((v, k) => k + 1)
-
-      reps.forEach((num) => {
-        items.push({ type: 'hang', seconds: HANG_SECONDS, rep: num, hangIndex: hangIndex, ...hang })
-
-        if (num === HANGS_PER_SET) {
-          if (hangIndex + 1 < this.state.hangs.length) {
-            items.push({ type: 'longRest', seconds: LONG_REST_SECONDS })
-          }
-        } else {
-          items.push({ type: 'rest', seconds: REST_SECONDS, rep: num, hangIndex: hangIndex, ...hang })
-        }
-      });
-    });
-
-
-    this.setState({
-      workout: {
-        items: items,
-        activeIndex: 0,
-        timeRemaining: items[0].seconds
-      }
-    })
   }
 
   startWorkout() {
