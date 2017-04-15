@@ -122,17 +122,21 @@ export default class hbtimer extends Component {
     this.navigate('list')
   }
 
-  getFirstItemFromNextSet(tryAdd = 1) {
-    let currentHangIndex = this.state.workout.items[this.state.workout.activeIndex].hangIndex;
+  getFirstItemFromNextSet() {
+    const currentItemIndex = this.state.workout.activeIndex
+    const currentHangIndex = this.state.workout.items[currentItemIndex].hangIndex
+    let increment = 1
 
-    let nextItem = this.state.workout.items[this.state.workout.activeIndex + tryAdd];
+    while (true) {
+      let nextItem = this.state.workout.items[currentItemIndex + increment];
 
-    if (!nextItem) {
-      return;
-    } else if (nextItem.hangIndex !== undefined && (currentHangIndex === undefined || (nextItem.hangIndex > currentHangIndex))) {
-      return nextItem;
-    } else {
-      return this.getFirstItemFromNextSet(tryAdd + 1)
+      if (!nextItem) {
+        return;
+      } else if (nextItem.hangIndex !== undefined && (currentHangIndex === undefined || (nextItem.hangIndex > currentHangIndex))) {
+        return nextItem;
+      } else {
+        increment++
+      }
     }
   }
 
