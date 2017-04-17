@@ -7,6 +7,7 @@ import * as routes from '../routes'
 import * as workoutStatuses from '../constants/workoutStatuses'
 import calculateWorkoutItems from '../helpers/calculateWorkoutItems'
 import store from 'react-native-simple-store'
+import styles from '../styles'
 
 const DEFAULT_ROUTE = 'list'
 const DEFAULT_HANGS = [{ text: 'Small edge half-crimp', weight: '-10lbs' }]
@@ -24,7 +25,6 @@ export default class App extends Component {
     }
   }
 
-  // Restore saved data
   componentDidMount() {
     store.get(STORAGE_KEY).then((value) => {
       if (value) {
@@ -33,7 +33,6 @@ export default class App extends Component {
     })
   }
 
-  // Persist all state changes to localstorage
   componentDidUpdate() {
     store.save(STORAGE_KEY, this.state.hangs)
   }
@@ -189,15 +188,13 @@ export default class App extends Component {
 
   render() {
     return (
-      <View style={{flex: 1,
-          flexDirection: "column",
-          backgroundColor: "white"
-      }}>
+      <View style={styles.app}>
         <Navigator
           initialRoute={routes[DEFAULT_ROUTE]}
           renderScene={route => route.render(this)}
           ref={(node) => { this.navigator = node }}
-          navigationBar={this.state.currentRouteData.usesNavbar &&
+          navigationBar={
+            this.state.currentRouteData.usesNavbar &&
             <NavBar
               currentRoute={this.state.currentRoute}
               handleDone={this.handleDone}
@@ -205,7 +202,9 @@ export default class App extends Component {
               handleAdd={this.handleAdd}
               />
           }
-          sceneStyle={{paddingTop: this.state.currentRouteData.usesNavbar ? 65 : 0}}
+          sceneStyle={{
+            paddingTop: this.state.currentRouteData.usesNavbar ? 65 : 0
+          }}
         />
 
         { this.state.currentRouteData.hideStartBar ||
