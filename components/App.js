@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
-import { View, Navigator, AsyncStorage } from 'react-native'
+import { View, Navigator } from 'react-native'
 import Timer from 'react-native-timer'
 import NavBar from '../components/NavBar'
 import StartBar from '../components/StartBar'
 import * as routes from '../routes'
 import * as workoutStatuses from '../constants/workoutStatuses'
 import calculateWorkoutItems from '../helpers/calculateWorkoutItems'
+import store from 'react-native-simple-store'
 
 const DEFAULT_ROUTE = 'list'
 const DEFAULT_HANGS = [{ text: 'Small edge half-crimp', weight: '-10lbs' }]
@@ -25,16 +26,16 @@ export default class App extends Component {
 
   // Restore saved data
   componentDidMount() {
-    AsyncStorage.getItem(STORAGE_KEY).then((value) => {
+    store.get(STORAGE_KEY).then((value) => {
       if (value) {
-        this.setState({hangs: JSON.parse(value)})
+        this.setState({hangs: value})
       }
     })
   }
 
   // Persist all state changes to localstorage
   componentDidUpdate() {
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(this.state.hangs));
+    store.save(STORAGE_KEY, this.state.hangs)
   }
 
   onChangeText = (index, attr, text) => {

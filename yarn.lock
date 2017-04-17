@@ -2391,6 +2391,10 @@ lodash.keys@^3.0.0:
     lodash.isarguments "^3.0.0"
     lodash.isarray "^3.0.0"
 
+lodash.merge@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.0.tgz#69884ba144ac33fe699737a6086deffadd0f89c5"
+
 lodash.pad@^4.1.0:
   version "4.5.1"
   resolved "https://registry.yarnpkg.com/lodash.pad/-/lodash.pad-4.5.1.tgz#4330949a833a7c8da22cc20f6a26c4d59debba70"
@@ -2922,6 +2926,12 @@ react-devtools-core@^2.0.8:
 react-native-navbar@^1.7.1:
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/react-native-navbar/-/react-native-navbar-1.7.1.tgz#de0e6f8c2156c7e984bb43c76732bd2437b7df0f"
+
+react-native-simple-store@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-simple-store/-/react-native-simple-store-1.1.0.tgz#69e91d6b91d362cd4ea12b0486df3eaf2f628b04"
+  dependencies:
+    lodash.merge "^4.6.0"
 
 react-native-timer@^1.3.1:
   version "1.3.1"
