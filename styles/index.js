@@ -2,11 +2,19 @@ import { StyleSheet } from 'react-native'
 
 export const colors = {
   orange: '#ff9600',
+  lighterGray: '#eee',
+  lightGray: '#ccc',
+  gray: '#999',
   darkGray: '#666',
   darkerGray: '#444',
   darkestGray: '#222',
   white: '#fff',
-  black: '#000'
+  black: '#000',
+  deleteRed: '#ff3824'
+}
+
+export const sizes = {
+  fontNormal: 17.5
 }
 
 let styles = StyleSheet.create({
@@ -32,9 +40,9 @@ let styles = StyleSheet.create({
     marginRight: 8
   },
   startBar: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     height: 100,
     padding: 1,
     backgroundColor: colors.black,
@@ -61,7 +69,52 @@ let styles = StyleSheet.create({
   },
   circleButtonText: {
     fontSize: 16,
-    backgroundColor: "transparent"
+    backgroundColor: 'transparent'
+  },
+  listItem: {
+    height: 50,
+    paddingRight: 15,
+    marginLeft: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.darkGray,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  editableListItem: {
+    paddingRight: 46,
+    paddingLeft: 36,
+    justifyContent: 'flex-start'
+  },
+  listItemText: {
+    fontSize: sizes.fontNormal,
+    color: colors.lightGray
+  },
+  listItemWeight: {
+    fontSize: sizes.fontNormal,
+    color: colors.gray,
+    marginLeft: 10
+  },
+  editableListItemDelete: {
+    position: 'absolute',
+    left: 0
+  },
+  editableListItemText: {
+    fontSize: sizes.fontNormal,
+    flex: 1,
+    color: colors.lightGray
+  },
+  editableListItemWeight: {
+    textAlign: 'right',
+    minWidth: 60,
+    fontSize: sizes.fontNormal,
+    color: colors.gray,
+    marginLeft: 10,
+    alignContent: 'flex-end'
+  },
+  editableListItemReorder: {
+    position: 'absolute',
+    right: 10
   }
 })
 
