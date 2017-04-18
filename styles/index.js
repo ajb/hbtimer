@@ -10,7 +10,9 @@ export const colors = {
   darkestGray: '#222',
   white: '#fff',
   black: '#000',
-  deleteRed: '#ff3824'
+  deleteRed: '#ff3824',
+  hangBg: '#083506',
+  restBg: '#7e1b12'
 }
 
 export const sizes = {
@@ -115,6 +117,61 @@ let styles = StyleSheet.create({
   editableListItemReorder: {
     position: 'absolute',
     right: 10
+  },
+  workoutContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 30
+  },
+  'workoutContainer-initialCountdown': {
+    backgroundColor: colors.darkestGray
+  },
+  'workoutContainer-longRest': {
+    backgroundColor: colors.darkestGray
+  },
+  'workoutContainer-hang': {
+    backgroundColor: colors.hangBg
+  },
+  'workoutContainer-rest': {
+    backgroundColor: colors.restBg
+  },
+  workoutTime: {
+    color: colors.white,
+    position: 'absolute',
+    fontSize: 50,
+    top: 40
+  },
+  workoutTitle: {
+    color: colors.white,
+    fontSize: 60
+  },
+  workoutSubtext: {
+    color: colors.white,
+    fontSize: 20
+  },
+  workoutNext: {
+    color: colors.white,
+    position: 'absolute',
+    bottom: 20
+  },
+  listContainer: {
+    flex: 1,
+    backgroundColor: colors.darkestGray
+  },
+  doneContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.darkestGray,
+    paddingTop: 20
+  },
+  doneTitle: {
+    color: colors.white,
+    fontSize: 40
+  },
+  doneSubtext: {
+    color: colors.white
   }
 })
 

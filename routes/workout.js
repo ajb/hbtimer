@@ -1,21 +1,7 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+import React from 'react'
+import { View, Text, StyleSheet } from 'react-native'
 import padLeft from '../helpers/padLeft'
-
-const stylesByType = {
-  initialCountdown: {
-    backgroundColor: "#222"
-  },
-  longRest: {
-    backgroundColor: "#222"
-  },
-  hang: {
-    backgroundColor: "#083506"
-  },
-  rest: {
-    backgroundColor: "#7e1b12"
-  }
-}
+import styles from '../styles'
 
 function formatTime (seconds) {
   let minutes = Math.floor(seconds / 60)
@@ -53,21 +39,16 @@ export default {
     let nextText = ctx.getFirstItemFromNextSet() && formatWorkoutItem(ctx.getFirstItemFromNextSet()).subtext;
 
     return (
-      <View style={Object.assign({}, {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        paddingTop: 30
-      }, stylesByType[activeItem.type])}>
-        <Text style={{color: "white", fontSize: 50, position: 'absolute', top: 40}}>{formatTime(timeRemaining)}</Text>
-        <Text style={{color: "white", fontSize: 60}}>
+      <View style={StyleSheet.flatten([styles.workoutContainer, styles["workoutContainer-" + activeItem.type]])}>
+        <Text style={styles.workoutTime}>{formatTime(timeRemaining)}</Text>
+        <Text style={styles.workoutTitle}>
           {formatWorkoutItem(activeItem).text}
           {activeItem.rep ? ` #${activeItem.rep}` : ''}
         </Text>
-        <Text style={{color: "white", fontSize: 20}}>{formatWorkoutItem(activeItem).subtext}</Text>
+        <Text style={styles.workoutSubtext}>{formatWorkoutItem(activeItem).subtext}</Text>
 
         { nextText &&
-          <Text style={{color: "white", position: 'absolute', bottom: 20}}>
+          <Text style={styles.workoutNext}>
             {"Next: "}
             <Text style={{fontWeight: 'bold'}}>{nextText}</Text>
           </Text> }

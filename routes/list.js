@@ -1,16 +1,12 @@
-import React from 'react';
-import { View } from 'react-native';
+import React from 'react'
+import { View } from 'react-native'
 import ListItem from '../components/ListItem'
+import styles from '../styles'
 
 export default {
   usesNavbar: true,
-  render: (ctx) => {
-    return (
-      <View style={{flex: 1, backgroundColor: "#222"}}>
-        <View style={{flex: 1}}>
-          {ctx.state.hangs.map((item, index) => <ListItem key={index} item={item} />)}
-        </View>
-      </View>
-    )
-  }
+  render: (ctx) =>
+    <View style={styles.listContainer}>
+      {ctx.state.hangs.map((item, index) => <ListItem key={index} item={item} />)}
+    </View>
 }
