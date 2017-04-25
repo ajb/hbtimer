@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -36,6 +37,7 @@
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		7F2B5C7927594A1F83ED37F5 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BE447C23059A466B90DD901A /* Zocial.ttf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+		9C63769E8E3044E1ACFBCABB /* libRNIdleTimer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D66F8D3880DD48CE9987F058 /* libRNIdleTimer.a */; };
 		9EAE922EAB654420A8954DBD /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BBD17DEBB5744E74B7F2A287 /* MaterialIcons.ttf */; };
 		A6AF3D1FAC154600A6810CB2 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9308EC60B9B04EA48C844B99 /* MaterialCommunityIcons.ttf */; };
 		B753F1D227644639B08967D9 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 62F853E348B14F07B4E8291E /* EvilIcons.ttf */; };
@@ -46,7 +48,6 @@
 		E2D2B25744DE4B57AAADA2E5 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9774A30449C54EF2B212D9FC /* Entypo.ttf */; };
 		F8CDE679E75348018ED7AA32 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F114B9062B564A5C8E1029E2 /* SimpleLineIcons.ttf */; };
 		FF16B28A7C2B45ADA4D38906 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 21E259273F5742C4AA62D366 /* Ionicons.ttf */; };
-		9C63769E8E3044E1ACFBCABB /* libRNIdleTimer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D66F8D3880DD48CE9987F058 /* libRNIdleTimer.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -225,6 +226,13 @@
 			remoteGlobalIDString = 2D2A28201D9B03D100D4039D;
 			remoteInfo = "RCTAnimation-tvOS";
 		};
+		769F5B791EAFBB230063E316 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB4A4A855F7147A98F697213 /* RNIdleTimer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 01D7495A1CC96385007E93FA;
+			remoteInfo = RNIdleTimer;
+		};
 		76E4B8F61EA02502001CECDE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 34DDBB74B0754236924C3757 /* RNVectorIcons.xcodeproj */;
@@ -284,9 +292,9 @@
 		A571E767BF5042B29E2F6BFD /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		BBD17DEBB5744E74B7F2A287 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		BE447C23059A466B90DD901A /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
+		D66F8D3880DD48CE9987F058 /* libRNIdleTimer.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNIdleTimer.a; sourceTree = "<group>"; };
 		F114B9062B564A5C8E1029E2 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
-		FB4A4A855F7147A98F697213 /* RNIdleTimer.xcodeproj */ = {isa = PBXFileReference; name = "RNIdleTimer.xcodeproj"; path = "../node_modules/react-native-idle-timer/ios/RNIdleTimer.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		D66F8D3880DD48CE9987F058 /* libRNIdleTimer.a */ = {isa = PBXFileReference; name = "libRNIdleTimer.a"; path = "libRNIdleTimer.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		FB4A4A855F7147A98F697213 /* RNIdleTimer.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNIdleTimer.xcodeproj; path = "../node_modules/react-native-idle-timer/ios/RNIdleTimer.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -475,6 +483,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		769F5B5D1EAFBB210063E316 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				769F5B7A1EAFBB230063E316 /* libRNIdleTimer.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		76E4B8DA1EA024FE001CECDE /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -631,17 +647,20 @@
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
+						DevelopmentTeam = X37V3G9W47;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = RLRSGUR3TK;
+						DevelopmentTeam = X37V3G9W47;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = X37V3G9W47;
 						ProvisioningStyle = Automatic;
 					};
 					2D02E48F1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = X37V3G9W47;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 2D02E47A1E0B4A5D006451C7;
 					};
@@ -702,6 +721,10 @@
 				{
 					ProductGroup = 146834001AC3E56700842450 /* Products */;
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+				},
+				{
+					ProductGroup = 769F5B5D1EAFBB210063E316 /* Products */;
+					ProjectRef = FB4A4A855F7147A98F697213 /* RNIdleTimer.xcodeproj */;
 				},
 				{
 					ProductGroup = 76E4B8DA1EA024FE001CECDE /* Products */;
@@ -878,6 +901,13 @@
 			fileType = archive.ar;
 			path = "libRCTAnimation-tvOS.a";
 			remoteRef = 5E9157341DD0AC6500FF2AA8 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		769F5B7A1EAFBB230063E316 /* libRNIdleTimer.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNIdleTimer.a;
+			remoteRef = 769F5B791EAFBB230063E316 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		76E4B8F71EA02502001CECDE /* libRNVectorIcons.a */ = {
@@ -1105,7 +1135,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = RLRSGUR3TK;
+				DEVELOPMENT_TEAM = X37V3G9W47;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
@@ -1129,7 +1159,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = RLRSGUR3TK;
+				DEVELOPMENT_TEAM = X37V3G9W47;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
@@ -1288,8 +1318,10 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = X37V3G9W47;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1329,8 +1361,10 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
+				DEVELOPMENT_TEAM = X37V3G9W47;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
