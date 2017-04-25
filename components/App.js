@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { View, Navigator } from 'react-native'
 import Timer from 'react-native-timer'
+import IdleTimerManager from 'react-native-idle-timer'
 import NavBar from '../components/NavBar'
 import StartBar from '../components/StartBar'
 import * as routes from '../routes'
@@ -11,7 +12,7 @@ import styles from '../styles'
 
 const DEFAULT_ROUTE = 'list'
 const DEFAULT_HANGS = [{ text: 'Small edge half-crimp', weight: '-10lbs' }]
-const STORAGE_KEY = 'hbtimer-hangs';
+const STORAGE_KEY = 'hbtimer-hangs'
 
 export default class App extends Component {
   constructor(props) {
@@ -132,6 +133,7 @@ export default class App extends Component {
   startWorkout() {
     this.setState({ workoutStatus: workoutStatuses.STARTED })
     Timer.setInterval('workoutTimer', this.workoutTick, 1000)
+    IdleTimerManager.setIdleTimerDisabled(true)
   }
 
   workoutTick = () => {
@@ -156,6 +158,7 @@ export default class App extends Component {
 
   clearTimer() {
     Timer.clearInterval('workoutTimer')
+    IdleTimerManager.setIdleTimerDisabled(false)
   }
 
   workoutDone() {
